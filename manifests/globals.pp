@@ -17,7 +17,6 @@ class mongodb::globals (
   $bind_ip               = undef,
 
   $version               = undef,
-  $version_percona       = undef,
 
   $manage_package_repo   = undef,
   $manage_package        = undef,
@@ -33,7 +32,7 @@ class mongodb::globals (
   $pidfilemode           = undef,
   $manage_pidfile        = undef,
 ) {
-  
+
   if $use_enterprise_repo {
     $edition = 'enterprise'
   } else {
