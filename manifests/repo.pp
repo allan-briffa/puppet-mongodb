@@ -74,6 +74,11 @@ class mongodb::repo (
           $location = "http://${repo_domain}/psmdb-${mongover[0]}${mongover[1]}/apt/"
           $release = $facts['os']['distro']['codename']
           $repos = 'main'
+
+          $key = "${mongover[0]}.${mongover[1]}" ? {
+            '4.2'   => '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
+            default => ''
+          }
         }
       }
 
