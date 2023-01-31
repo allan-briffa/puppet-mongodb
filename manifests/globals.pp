@@ -26,6 +26,7 @@ class mongodb::globals (
 
   $repo_location         = undef,
   $use_enterprise_repo   = undef,
+  $use_percona           = undef,
 
   $pidfilepath           = undef,
   $pidfilemode           = undef,
@@ -50,6 +51,7 @@ class mongodb::globals (
       use_enterprise_repo => $use_enterprise_repo,
       repo_location       => $repo_location,
       proxy               => $repo_proxy,
+      use_percona         => $use_percona,
     }
   }
 }

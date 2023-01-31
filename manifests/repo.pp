@@ -3,6 +3,7 @@ class mongodb::repo (
   Variant[Enum['present', 'absent'], Boolean] $ensure = 'present',
   Optional[String] $version                           = undef,
   Boolean $use_enterprise_repo                        = false,
+  Optional[Boolean] $use_percona                      = false,
   Optional[String] $repo_location                     = undef,
   Optional[String] $proxy                             = undef,
   Optional[String] $proxy_username                    = undef,
@@ -39,32 +40,41 @@ class mongodb::repo (
         if $use_enterprise_repo == true {
           $repo_domain = 'repo.mongodb.com'
           $repo_path   = 'mongodb-enterprise'
-        } else {
+        } elsif $use_percona == false {
           $repo_domain = 'repo.mongodb.org'
           $repo_path   = 'mongodb-org'
+        } else {
+           $repo_domain = 'repo.percona.com'
         }
 
         $mongover = split($version, '[.]')
-        $location = $facts['os']['name'] ? {
-          'Debian' => "https://${repo_domain}/apt/debian",
-          'Ubuntu' => "https://${repo_domain}/apt/ubuntu",
-          default  => undef
+
+        if $use_percona == false {
+          $location = $facts['os']['name'] ? {
+            'Debian' => "https://${repo_domain}/apt/debian",
+            'Ubuntu' => "https://${repo_domain}/apt/ubuntu",
+            default  => undef
+          }
+          $release     = "${facts['os']['distro']['codename']}/${repo_path}/${mongover[0]}.${mongover[1]}"
+          $repos       = $facts['os']['name'] ? {
+            'Debian' => 'main',
+            'Ubuntu' => 'multiverse',
+            default => undef
+          }
+          $key = "${mongover[0]}.${mongover[1]}" ? {
+            '4.2'   => 'E162F504A20CDF15827F718D4B7C549A058F8B6B',
+            '4.0'   => '9DA31620334BD75D9DCB49F368818C72E52529D4',
+            '3.6'   => '2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5',
+            '3.4'   => '0C49F3730359A14518585931BC711F9BA15703C6',
+            '3.2'   => '42F3E95A2C4F08279C4960ADD68FA50FEA312927',
+            default => '492EAFE8CD016A07919F1D2B9ECBEC467F0CEB10'
+          }
+          $key_server = 'hkp://keyserver.ubuntu.com:80'
+        } else {
+          $location = "http://${repo_domain}/psmdb-${mongover[0]}${mongover[1]}/apt/"
+          $release = $facts['os']['distro']['codename']
+          $repos = 'main'
         }
-        $release     = "${facts['os']['distro']['codename']}/${repo_path}/${mongover[0]}.${mongover[1]}"
-        $repos       = $facts['os']['name'] ? {
-          'Debian' => 'main',
-          'Ubuntu' => 'multiverse',
-          default => undef
-        }
-        $key = "${mongover[0]}.${mongover[1]}" ? {
-          '4.2'   => 'E162F504A20CDF15827F718D4B7C549A058F8B6B',
-          '4.0'   => '9DA31620334BD75D9DCB49F368818C72E52529D4',
-          '3.6'   => '2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5',
-          '3.4'   => '0C49F3730359A14518585931BC711F9BA15703C6',
-          '3.2'   => '42F3E95A2C4F08279C4960ADD68FA50FEA312927',
-          default => '492EAFE8CD016A07919F1D2B9ECBEC467F0CEB10'
-        }
-        $key_server = 'hkp://keyserver.ubuntu.com:80'
       }
 
       contain mongodb::repo::apt
