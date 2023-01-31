@@ -44,7 +44,7 @@ class mongodb::repo (
           $repo_domain = 'repo.mongodb.org'
           $repo_path   = 'mongodb-org'
         } else {
-           $repo_domain = 'repo.percona.com'
+          $repo_domain = 'repo.percona.com'
         }
 
         $mongover = split($version, '[.]')
