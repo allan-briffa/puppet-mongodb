@@ -17,6 +17,7 @@ class mongodb::globals (
   $bind_ip               = undef,
 
   $version               = undef,
+  $version_percona       = undef,
 
   $manage_package_repo   = undef,
   $manage_package        = undef,
@@ -32,7 +33,7 @@ class mongodb::globals (
   $pidfilemode           = undef,
   $manage_pidfile        = undef,
 ) {
-
+  
   if $use_enterprise_repo {
     $edition = 'enterprise'
   } else {
@@ -53,5 +54,10 @@ class mongodb::globals (
       proxy               => $repo_proxy,
       use_percona         => $use_percona,
     }
+  }
+
+  if $version {
+    $mongover = split($version, '[.]')
+    $version_percona = "${version}-${mongover[2]}.${facts['os']['distro']['codename']}"
   }
 }
