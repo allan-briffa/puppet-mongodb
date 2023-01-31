@@ -79,6 +79,7 @@ class mongodb::repo (
             '4.2'   => '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
             default => ''
           }
+          $key_server = 'hkp://keyserver.ubuntu.com:80'
         }
       }
 
