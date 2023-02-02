@@ -10,6 +10,7 @@ class mongodb::server::service {
   $port             = $mongodb::server::port
   $configsvr        = $mongodb::server::configsvr
   $shardsvr         = $mongodb::server::shardsvr
+  $user             = $mongodb::server::user
 
   if !$port {
     if $configsvr {
@@ -38,12 +39,13 @@ class mongodb::server::service {
 
   if $service_manage {
     service { 'mongodb':
-      ensure    => $service_ensure,
-      name      => $service_name,
-      enable    => $service_enable,
-      provider  => $service_provider,
-      hasstatus => true,
-      status    => $service_status,
+      ensure        => $service_ensure,
+      logon_account => $user,
+      name          => $service_name,
+      enable        => $service_enable,
+      provider      => $service_provider,
+      hasstatus     => true,
+      status        => $service_status,
     }
 
     if $service_ensure {
