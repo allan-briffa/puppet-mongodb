@@ -26,8 +26,11 @@ class mongodb::server::install {
       $file_ensure     = 'present'
     }
   }
-
-  package { 'mongodb_server_removal':
+  user { 'mongo_user':
+    ensure => present,
+    name   => $mongodb::server::user,
+  }
+  -> package { 'mongodb_server_removal':
     ensure => absent,
     name   => $package_name_remove,
     tag    => 'mongodb_package',
