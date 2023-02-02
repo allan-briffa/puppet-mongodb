@@ -22,16 +22,24 @@ class mongodb::params inherits mongodb::globals {
   $dbpath_fix            = false
 
   $manage_package        = pick($mongodb::globals::manage_package, $mongodb::globals::manage_package_repo, false)
+  $use_percona           = pick($mongodb::globals::use_percona, false)
   $pidfilemode           = pick($mongodb::globals::pidfilemode, '0644')
   $manage_pidfile        = pick($mongodb::globals::manage_pidfile, true)
 
   $version               = $mongodb::globals::version
+  $mongover              = split($version, '[.]')
 
   $config_data           = undef
 
   if $version {
-    $package_ensure        = $version
-    $package_ensure_mongos = $version
+    $package_ensure        = $use_percona ? {
+      true    => "${version}-${mongover[2]}.${facts['os']['distro']['codename']}",
+      default => $version,
+    }
+    $package_ensure_mongos = $use_percona ? {
+      true    => "${version}-${mongover[2]}.${facts['os']['distro']['codename']}",
+      default => $version,
+    }
   } else {
     $package_ensure        = true
     $package_ensure_mongos = true
@@ -43,7 +51,14 @@ class mongodb::params inherits mongodb::globals {
       if $manage_package {
         $user                    = pick($mongodb::globals::user, 'mongod')
         $group                   = pick($mongodb::globals::group, 'mongod')
-        $server_package_name     = pick($mongodb::globals::server_package_name, "mongodb-${mongodb::globals::edition}-server")
+        $server_package_name        = $use_percona ? {
+          true    => pick($mongodb::globals::server_package_name, 'percona-server-mongodb-server'),
+          default => pick($mongodb::globals::server_package_name, "mongodb-${mongodb::globals::edition}-server"),
+        }
+        $server_package_name_remove = $use_percona ? {
+          true    => pick($mongodb::globals::server_package_name, "mongodb-${mongodb::globals::edition}-server"),
+          default => pick($mongodb::globals::server_package_name, 'percona-server-mongodb-server'),
+        }
       } else {
         # RedHat/CentOS doesn't come with a prepacked mongodb
         # so we assume that you are using EPEL repository.
@@ -61,10 +76,17 @@ class mongodb::params inherits mongodb::globals {
     }
     'Debian': {
       if $manage_package {
-        $service_name            = pick($mongodb::globals::service_name, 'mongod')
-        $server_package_name     = pick($mongodb::globals::server_package_name, "mongodb-${mongodb::globals::edition}-server")
-        $config                  = '/etc/mongod.conf'
-        $pidfilepath             = pick($mongodb::globals::pidfilepath, '/var/run/mongod.pid')
+        $service_name               = pick($mongodb::globals::service_name, 'mongod')
+        $server_package_name        = $use_percona ? {
+          true    => pick($mongodb::globals::server_package_name, 'percona-server-mongodb-server'),
+          default => pick($mongodb::globals::server_package_name, "mongodb-${mongodb::globals::edition}-server"),
+        }
+        $server_package_name_remove = $use_percona ? {
+          true    => pick($mongodb::globals::server_package_name, "mongodb-${mongodb::globals::edition}-server"),
+          default => pick($mongodb::globals::server_package_name, 'percona-server-mongodb-server'),
+        }
+        $config                     = '/etc/mongod.conf'
+        $pidfilepath                = pick($mongodb::globals::pidfilepath, '/var/run/mongod.pid')
       } else {
         $server_package_name = pick($mongodb::globals::server_package_name, 'mongodb-server')
         $service_name        = pick($mongodb::globals::service_name, 'mongodb')
