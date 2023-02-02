@@ -18,6 +18,7 @@ class mongodb::server (
   Optional[Enum['stopped', 'running']] $service_status  = $mongodb::params::service_status,
   Variant[Boolean, String] $package_ensure              = $mongodb::params::package_ensure,
   String $package_name                                  = $mongodb::params::server_package_name,
+  String $package_name_remove                           = $mongodb::params::server_package_name_remove,
   Variant[Boolean, Stdlib::Absolutepath] $logpath       = $mongodb::params::logpath,
   Array[Stdlib::Host] $bind_ip                          = $mongodb::params::bind_ip,
   Optional[Boolean] $ipv6                               = undef,

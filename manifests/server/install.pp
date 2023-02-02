@@ -1,7 +1,8 @@
 # PRIVATE CLASS: do not call directly
 class mongodb::server::install {
-  $package_ensure = $mongodb::server::package_ensure
-  $package_name   = $mongodb::server::package_name
+  $package_ensure        = $mongodb::server::package_ensure
+  $package_name          = $mongodb::server::package_name
+  $package_name_remove   = $mongodb::server::package_name_remove
 
   case $package_ensure {
     true:     {
@@ -26,7 +27,12 @@ class mongodb::server::install {
     }
   }
 
-  package { 'mongodb_server':
+  package { 'mongodb_server_removal':
+    ensure => absent,
+    name   => $package_name_remove,
+    tag    => 'mongodb_package',
+  }
+  -> package { 'mongodb_server':
     ensure => $my_package_ensure,
     name   => $package_name,
     tag    => 'mongodb_package',
