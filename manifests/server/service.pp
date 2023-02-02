@@ -40,7 +40,7 @@ class mongodb::server::service {
   if $service_manage {
     service { 'mongodb':
       ensure        => $service_ensure,
-      logon_account => $user,
+      logonaccount => $user,
       name          => $service_name,
       enable        => $service_enable,
       provider      => $service_provider,
