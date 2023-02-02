@@ -93,8 +93,13 @@ class mongodb::params inherits mongodb::globals {
         $config              = '/etc/mongodb.conf'
         $pidfilepath         = $mongodb::globals::pidfilepath
       }
-      $user                    = pick($mongodb::globals::user, 'mongodb')
-      $group                   = pick($mongodb::globals::group, 'mongodb')
+      if $use_percona == true {
+        $user                    = pick($mongodb::globals::user, 'mongod')
+        $group                   = pick($mongodb::globals::group, 'mongod')
+      } else {
+        $user                    = pick($mongodb::globals::user, 'mongodb')
+        $group                   = pick($mongodb::globals::group, 'mongodb')
+      }
       $logpath                 = '/var/log/mongodb/mongodb.log'
       # avoid using fork because of the init scripts design
       $fork                    = undef
