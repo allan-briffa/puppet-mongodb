@@ -10,6 +10,7 @@ class mongodb::server::service {
   $port             = $mongodb::server::port
   $configsvr        = $mongodb::server::configsvr
   $shardsvr         = $mongodb::server::shardsvr
+  $use_percona      = $mongodb::server::use_percona
 
   if !$port {
     if $configsvr {
@@ -37,6 +38,15 @@ class mongodb::server::service {
   }
 
   if $service_manage {
+    if $use_percona==true
+    {
+      file_line { '/usr/bin/percona-server-mongodb-helper.sh':
+          ensure => absent,
+          path   => '/usr/bin/percona-server-mongodb-helper.sh',
+          line   => 'Type=forking'
+          match  => 'Type=forking', }
+
+    }
     service { 'mongodb':
       ensure    => $service_ensure,
       name      => $service_name,
