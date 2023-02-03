@@ -11,6 +11,9 @@ class mongodb::server::service {
   $configsvr        = $mongodb::server::configsvr
   $shardsvr         = $mongodb::server::shardsvr
   $use_percona      = $mongodb::server::use_percona
+  $user             = $mongodb::server::user
+  $group            = $mongodb::server::group
+  $logpath          = $mongodb::server::logpath
 
   if !$port {
     if $configsvr {
@@ -45,6 +48,16 @@ class mongodb::server::service {
           path   => '/lib/systemd/system/mongod.service',
           line   => 'Type=forking',
           }
+      -> file { "${logpath}/mongod.stderr":
+          owner => $user,
+          group => $group,
+          mode  => '0644',
+        }
+      -> file { "${logpath}/mongod.stdout":
+          owner => $user,
+          group => $group,
+          mode  => '0644',
+        }
     }
     -> service { 'mongodb':
       ensure    => $service_ensure,
