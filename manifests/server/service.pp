@@ -46,13 +46,13 @@ class mongodb::server::service {
         line => 'Type=forking',
       }
       file { '/var/log/mongodb/mongod.stderr':
-        owner => $os_user,
-        group => $os_user,
+        owner => $user,
+        group => $group,
         mode  => '0644',
       }
       -> file { '/var/log/mongodb/mongod.stdout':
-        owner => $os_user,
-        group => $os_user,
+        owner => $user,
+        group => $group,
         mode  => '0644',
       }
     }
