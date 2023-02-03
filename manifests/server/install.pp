@@ -4,9 +4,9 @@ class mongodb::server::install {
   $package_name          = $mongodb::server::package_name
   $package_name_remove   = $mongodb::server::package_name_remove
   $use_percona           = $mongodb::server::use_percona
-  $logpath               = $mongodb::server::logpath,
-  $user                  = $mongodb::server::user,
-  $group                 = $mongodb::server::group,
+  $logpath               = $mongodb::server::logpath
+  $user                  = $mongodb::server::user
+  $group                 = $mongodb::server::group
 
   case $package_ensure {
     true:     {
