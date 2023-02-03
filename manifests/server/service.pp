@@ -43,9 +43,9 @@ class mongodb::server::service {
       file_line { '/usr/bin/percona-server-mongodb-helper.sh':
           ensure => absent,
           path   => '/usr/bin/percona-server-mongodb-helper.sh',
-          line   => 'Type=forking'
-          match  => 'Type=forking', }
-
+          line   => 'Type=forking',
+          match  => 'Type=forking', 
+          }
     }
     service { 'mongodb':
       ensure    => $service_ensure,
