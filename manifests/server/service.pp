@@ -40,9 +40,9 @@ class mongodb::server::service {
   if $service_manage {
     if $use_percona==true
     {
-      file_line { '/lib/systemd/system/mongod.service;':
+      file_line { '/lib/systemd/system/mongod.service':
           ensure => absent,
-          path   => '/lib/systemd/system/mongod.service;',
+          path   => '/lib/systemd/system/mongod.service',
           line   => 'Type=forking',
           }
     }
