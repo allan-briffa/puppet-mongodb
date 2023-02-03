@@ -10,9 +10,6 @@ class mongodb::server::service {
   $port             = $mongodb::server::port
   $configsvr        = $mongodb::server::configsvr
   $shardsvr         = $mongodb::server::shardsvr
-  $use_percona      = $mongodb::server::use_percona
-  $user             = $mongodb::server::user
-  $group            = $mongodb::server::group
 
   if !$port {
     if $configsvr {
@@ -40,23 +37,7 @@ class mongodb::server::service {
   }
 
   if $service_manage {
-    if $use_percona == true {
-      file_line { 'mongodb':
-        path => '/lib/systemd/system/mongod.service',
-        line => 'Type=forking',
-      }
-      file { '/var/log/mongodb/mongod.stderr':
-        owner => $user,
-        group => $group,
-        mode  => '0644',
-      }
-      -> file { '/var/log/mongodb/mongod.stdout':
-        owner => $user,
-        group => $group,
-        mode  => '0644',
-      }
-    }
-    -> service { 'mongodb':
+    service { 'mongodb':
       ensure    => $service_ensure,
       name      => $service_name,
       enable    => $service_enable,
