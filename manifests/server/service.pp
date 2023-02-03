@@ -10,7 +10,9 @@ class mongodb::server::service {
   $port             = $mongodb::server::port
   $configsvr        = $mongodb::server::configsvr
   $shardsvr         = $mongodb::server::shardsvr
+  $use_percona      = $mongodb::server::use_percona
   $user             = $mongodb::server::user
+  $group            = $mongodb::server::group
 
   if !$port {
     if $configsvr {
@@ -38,13 +40,29 @@ class mongodb::server::service {
   }
 
   if $service_manage {
-    service { 'mongodb':
-      ensure        => $service_ensure,
-      name          => $service_name,
-      enable        => $service_enable,
-      provider      => $service_provider,
-      hasstatus     => true,
-      status        => $service_status,
+    if $use_percona == true {
+      file_line { 'mongodb':
+        path => '/lib/systemd/system/mongod.service',
+        line => 'Type=forking',
+      }
+      file { '/var/log/mongodb/mongod.stderr':
+        owner => $os_user,
+        group => $os_user,
+        mode  => '0644',
+      }
+      -> file { '/var/log/mongodb/mongod.stdout':
+        owner => $os_user,
+        group => $os_user,
+        mode  => '0644',
+      }
+    }
+    -> service { 'mongodb':
+      ensure    => $service_ensure,
+      name      => $service_name,
+      enable    => $service_enable,
+      provider  => $service_provider,
+      hasstatus => true,
+      status    => $service_status,
     }
 
     if $service_ensure {
@@ -56,5 +74,4 @@ class mongodb::server::service {
       }
     }
   }
-
 }
