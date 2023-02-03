@@ -3,6 +3,10 @@ class mongodb::server::install {
   $package_ensure        = $mongodb::server::package_ensure
   $package_name          = $mongodb::server::package_name
   $package_name_remove   = $mongodb::server::package_name_remove
+  $use_percona           = $mongodb::server::use_percona
+  $logpath               = $mongodb::server::logpath,
+  $user                  = $mongodb::server::user,
+  $group                 = $mongodb::server::group,
 
   case $package_ensure {
     true:     {
@@ -39,5 +43,17 @@ class mongodb::server::install {
     ensure => $my_package_ensure,
     name   => $package_name,
     tag    => 'mongodb_package',
+  }
+  -> if $use_percona == true {
+    file { "${logpath}/mongod.stderr":
+      owner => $user,
+      group => $group,
+      mode  => '0644',
+    }
+    -> file { "${logpath}/mongod.stdout":
+      owner => $user,
+      group => $group,
+      mode  => '0644',
+    }
   }
 }
