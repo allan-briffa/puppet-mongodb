@@ -40,14 +40,13 @@ class mongodb::server::service {
   if $service_manage {
     if $use_percona==true
     {
-      file_line { '/usr/bin/percona-server-mongodb-helper.sh':
+      file_line { '/lib/systemd/system/mongod.service;':
           ensure => absent,
-          path   => '/usr/bin/percona-server-mongodb-helper.sh',
+          path   => '/lib/systemd/system/mongod.service;',
           line   => 'Type=forking',
-          match  => 'Type=forking', 
           }
     }
-    service { 'mongodb':
+    -> service { 'mongodb':
       ensure    => $service_ensure,
       name      => $service_name,
       enable    => $service_enable,
