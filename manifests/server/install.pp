@@ -3,6 +3,9 @@ class mongodb::server::install {
   $package_ensure        = $mongodb::server::package_ensure
   $package_name          = $mongodb::server::package_name
   $package_name_remove   = $mongodb::server::package_name_remove
+  $dbpath                = $mongodb::server::dbpath
+  $user                  = $mongodb::server::user
+  $group                 = $mongodb::server::group
 
   case $package_ensure {
     true:     {
@@ -40,4 +43,9 @@ class mongodb::server::install {
     name   => $package_name,
     tag    => 'mongodb_package',
   }
+  exec { "Enforce ${dbpath} permissions":
+        command => "chown ${user}:${group} ${dbpath}",
+        refreshonly => true,
+        subscribe => Package["mongodb_server"],
+      }
 }
