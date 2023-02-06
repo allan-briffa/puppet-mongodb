@@ -43,12 +43,7 @@ class mongodb::server::service {
   if $service_manage {
     if $use_percona==true
     {
-      file_line { '/lib/systemd/system/mongod.service':
-          ensure => absent,
-          path   => '/lib/systemd/system/mongod.service',
-          line   => 'Type=forking',
-          }
-      -> file { "/var/log/mongodb/mongod.stderr":
+      file { "/var/log/mongodb/mongod.stderr":
           owner => $user,
           group => $group,
           mode  => '0644',
@@ -58,6 +53,11 @@ class mongodb::server::service {
           group => $group,
           mode  => '0644',
         }
+      -> file_line { '/lib/systemd/system/mongod.service':
+          ensure => absent,
+          path   => '/lib/systemd/system/mongod.service',
+          line   => 'Type=forking',
+          }
     } 
     
     service { 'mongodb':
