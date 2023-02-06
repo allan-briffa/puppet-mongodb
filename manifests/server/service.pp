@@ -58,8 +58,9 @@ class mongodb::server::service {
           group => $group,
           mode  => '0644',
         }
-    }
-    -> service { 'mongodb':
+    } 
+    
+    service { 'mongodb':
       ensure    => $service_ensure,
       name      => $service_name,
       enable    => $service_enable,
