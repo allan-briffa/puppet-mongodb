@@ -47,5 +47,6 @@ class mongodb::server::install {
         command => "chown ${user}:${group} ${dbpath}",
         refreshonly => true,
         subscribe => Package["mongodb_server"],
+        path    => $::facts['path'],
       }
 }
