@@ -42,6 +42,7 @@ class mongodb::server::install {
     ensure => $my_package_ensure,
     name   => $package_name,
     tag    => 'mongodb_package',
+    notify => Exec["Enforce ${dbpath} permissions"],
   }
   exec { "Enforce ${dbpath} permissions":
         command => "chown ${user}:${group} ${dbpath}",
