@@ -48,12 +48,12 @@ class mongodb::server::service {
           path   => '/lib/systemd/system/mongod.service',
           line   => 'Type=forking',
           }
-      -> file { "${logpath}/mongod.stderr":
+      -> file { "/var/log/mongodb/mongod.stderr":
           owner => $user,
           group => $group,
           mode  => '0644',
         }
-      -> file { "${logpath}/mongod.stdout":
+      -> file { "/var/log/mongodb/mongod.stdout":
           owner => $user,
           group => $group,
           mode  => '0644',
