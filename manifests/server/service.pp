@@ -43,21 +43,18 @@ class mongodb::server::service {
   if $service_manage {
     if $use_percona==true
     {
-      file { "/var/log/mongodb/mongod.stderr":
-          owner => $user,
-          group => $group,
-          mode  => '0644',
-        }
-      -> file { "/var/log/mongodb/mongod.stdout":
-          owner => $user,
-          group => $group,
-          mode  => '0644',
-        }
+      file_line { 'Percona log symlink dereference permissions':
+        ensure             => present,
+        path               => '/usr/bin/percona-server-mongodb-helper.sh',
+        line               => 'chown -HR mongod:mongod /var/log/mongodb',
+        match              => 'chown -R mongod:mongod /var/log/mongodb',
+        append_on_no_match => false,
+      }
       -> file_line { '/lib/systemd/system/mongod.service':
           ensure => absent,
           path   => '/lib/systemd/system/mongod.service',
           line   => 'Type=forking',
-          }
+        }
     } 
     
     service { 'mongodb':
