@@ -27,17 +27,17 @@ class mongodb::params inherits mongodb::globals {
   $manage_pidfile        = pick($mongodb::globals::manage_pidfile, true)
 
   $version               = $mongodb::globals::version
-  $mongover              = split($version, '[.]')
+  $version_percona       = $mongodb::globals::version_percona
 
   $config_data           = undef
 
   if $version {
     $package_ensure        = $use_percona ? {
-      true    => "${version}-${mongover[2]}.${facts['os']['distro']['codename']}",
+      true    => $version_percona,
       default => $version,
     }
     $package_ensure_mongos = $use_percona ? {
-      true    => "${version}-${mongover[2]}.${facts['os']['distro']['codename']}",
+      true    => $version_percona,
       default => $version,
     }
   } else {
