@@ -13,8 +13,7 @@ class mongodb::client::params inherits mongodb::globals {
     } else {
       $package_name = 'percona-server-mongodb-shell'
       $package_name_remove = "mongodb-${mongodb::globals::edition}-shell"
-      $mongover = split($version, '[.]')
-      $package_ensure = "${version}-${mongover[2]}.${facts['os']['distro']['codename']}"
+      $package_ensure = $version_percona
     }
   } else {
     $package_name = $facts['os']['family'] ? {
