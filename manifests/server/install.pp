@@ -44,14 +44,4 @@ class mongodb::server::install {
     name   => $package_name,
     tag    => 'mongodb_package',
   }
-  -> if $use_percona==true {
-      file_line { 'Percona log symlink dereference permissions':
-        ensure             => present,
-        path               => '/usr/bin/percona-server-mongodb-helper.sh',
-        line               => 'chown -HR mongod:mongod /var/log/mongodb',
-        match              => 'chown -R mongod:mongod /var/log/mongodb',
-        append_on_no_match => false,
-        subscribe          => Package['mongodb_server'],
-      }
-    } 
 }
