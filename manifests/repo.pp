@@ -76,6 +76,7 @@ class mongodb::repo (
           $repos = 'main'
 
           $key = "${mongover[0]}.${mongover[1]}" ? {
+            '4.4'   => '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
             '4.2'   => '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
             default => ''
           }
