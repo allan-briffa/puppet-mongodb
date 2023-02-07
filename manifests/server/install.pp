@@ -6,6 +6,7 @@ class mongodb::server::install {
   $dbpath                = $mongodb::server::dbpath
   $user                  = $mongodb::server::user
   $group                 = $mongodb::server::group
+  $use_percona           = $mongodb::server::use_percona
 
   case $package_ensure {
     true:     {
@@ -42,12 +43,19 @@ class mongodb::server::install {
     ensure => $my_package_ensure,
     name   => $package_name,
     tag    => 'mongodb_package',
-    notify => Exec["Enforce ${dbpath} permissions"],
   }
-  exec { "Enforce ${dbpath} permissions":
-        command => "chown ${user}:${group} ${dbpath}",
-        refreshonly => true,
-        subscribe => Package["mongodb_server"],
-        path    => $::facts['path'],
+  -> if $use_percona==true {
+      file_line { 'Percona log symlink dereference permissions':
+        ensure             => present,
+        path               => '/usr/bin/percona-server-mongodb-helper.sh',
+        line               => 'chown -HR mongod:mongod /var/log/mongodb',
+        match              => 'chown -R mongod:mongod /var/log/mongodb',
+        append_on_no_match => false,
       }
+      -> file_line { '/lib/systemd/system/mongod.service':
+          ensure => absent,
+          path   => '/lib/systemd/system/mongod.service',
+          line   => 'Type=forking',
+        }
+    } 
 }
