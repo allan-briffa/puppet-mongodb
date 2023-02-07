@@ -51,11 +51,13 @@ class mongodb::server::install {
         line               => 'chown -HR mongod:mongod /var/log/mongodb',
         match              => 'chown -R mongod:mongod /var/log/mongodb',
         append_on_no_match => false,
+        subscribe          => Package['mongodb_server'],
       }
-      -> file_line { '/lib/systemd/system/mongod.service':
-          ensure => absent,
-          path   => '/lib/systemd/system/mongod.service',
-          line   => 'Type=forking',
+      file_line { '/lib/systemd/system/mongod.service':
+          ensure    => absent,
+          path      => '/lib/systemd/system/mongod.service',
+          line      => 'Type=forking',
+          subscribe => Package['mongodb_server'],
         }
     } 
 }
